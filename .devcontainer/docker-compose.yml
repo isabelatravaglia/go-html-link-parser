@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  app:
+    # See https://aka.ms/vscode-remote/containers/non-root for details.
+    user: vscode
+
+    build: 
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        - VARIANT=1.16
+        - NODE_VERSION=16
+    # environment:
+    #   VARIANT: 1.16
+    #   NODE_VERSION: 16
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    command: sleep infinity
+    volumes:
+      - ..:/workspace:cached
+      # Mount the ssh folder to authenticate with github
+      - $HOME/.ssh/:/home/vscode/.ssh
