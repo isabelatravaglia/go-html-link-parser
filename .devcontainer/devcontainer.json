@@ -11,7 +11,7 @@
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
 		"go.toolsManagement.checkForUpdates": "local",
-		"go.useLanguageServer": true,
+		"go.useLanguageServer": false,
 		"go.gopath": "/go",
 		"go.goroot": "/usr/local/go",
     "workbench.colorTheme": "Cobalt2",
@@ -32,7 +32,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "go version",
+	// "postCreateCommand": "go mod download",
 
 	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "golang"

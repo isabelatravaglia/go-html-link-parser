@@ -24,7 +24,6 @@ ARG USER="golang"
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
     sudo \
-    software-properties-common \
     # && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" \
   && sudo apt-get clean \
   && sudo rm -rf /var/cache/apt/archives/* \
@@ -38,11 +37,25 @@ usermod -p "*" $USER && \
 usermod -aG sudo $USER && \
 echo "$USER ALL=NOPASSWD: ALL" >> /etc/sudoers.d/50-$USER
 
-USER $USER
+# USER $USER
+    
+COPY --chown=$USER ./gotools.sh .
+
+RUN chmod +x ./gotools.sh && sudo bash ./gotools.sh
 
 ############################## DEVCONTAINER IMAGE #################################
 
-from base as devcontainer
+FROM base as devcontainer
+
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends \
+    software-properties-common \
+  && sudo apt-get clean \
+  && sudo rm -rf /var/cache/apt/archives/* \
+  && sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+  && sudo truncate -s 0 /var/log/*log
+
+USER $USER
 
 # Install Git Cli
 RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C99B11DEB97541F0 \ 
@@ -50,8 +63,8 @@ RUN sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C99B11
 && sudo apt update -qq \
 && sudo apt install -y gh
 
-# Install zsh
-RUN sudo apt install -y zsh imagemagick jq \
+# Install zsh and vim
+RUN sudo apt install -y zsh imagemagick jq vim \
 && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 
