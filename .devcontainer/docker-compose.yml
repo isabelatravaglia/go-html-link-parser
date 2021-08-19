@@ -1,5 +1,8 @@
 version: '3.8'
 
+volumes:
+  cache:
+
 services:
   app:
     # See https://aka.ms/vscode-remote/containers/non-root for details.
@@ -25,3 +28,4 @@ services:
       # Mount the ssh folder to authenticate with github
       # - $HOME/.ssh/:/home/vscode/.ssh
       - $HOME/.ssh/:/home/golang/.ssh
+      - cache:/go
