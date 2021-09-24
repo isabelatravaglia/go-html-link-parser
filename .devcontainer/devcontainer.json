@@ -25,7 +25,8 @@
 	"extensions": [
 		"golang.Go",
     "wesbos.theme-cobalt2",
-    "CoenraadS.bracket-pair-colorizer"
+    "CoenraadS.bracket-pair-colorizer",
+    "casualjim.gotemplate"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.

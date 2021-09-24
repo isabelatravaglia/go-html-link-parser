@@ -3,7 +3,8 @@ package main
 import (
   "fmt"
   "net/http"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 // Example of a Handler: homeHandle
@@ -34,12 +35,21 @@ func faq(w http.ResponseWriter, r *http.Request) {
   fmt.Fprint(w, "<h1>This is our FAQ page</h1>")
 }
 
+func user(w http.ResponseWriter, r *http.Request) {
+	userID := chi.URLParam(r, "userID")
+  w.Header().Set("Content-Type", "text/html")
+  fmt.Fprintf(w, "<h1>Here is the user id: %v</h1>", userID)
+}
+
+
 func notFound(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Content-Type", "text/html")
   fmt.Fprint(w, "<h1>Sorry, this page doesn't exist!</h1>")
 }
 
 var nf http.Handler = http.HandlerFunc(notFound) // This is not calling http.HandlerFunc with notFound as an argument. It is actually converting the notFound function to a http.HandlerFunc type.
+
+
 
 // http.Handler - interface with the ServeHTTP method
 // http.HandlerFunc - a function type that accepts same args ServeHTTP method. Also implements http.Handler.
@@ -51,15 +61,20 @@ func main() {
 	// Alternate way to implement Handle instead of initializing a homeHandle with new(homeHandle)
 	// access the value of pointer homeHandle (dereference) and assigns it to hh
 	// var hh *homeHandle 
-
-  r := mux.NewRouter()
-  r.HandleFunc("/", home)
-  r.Handle("/homehandle", new(homeHandle))
+	// var l http.Handler = http.HandlerFunc(logger)
+	// c := http.HandlerFunc(middleware.Logger(http.HandlerFunc(contact)))
+  r := chi.NewRouter()
+	r.Use(middleware.Logger)
+  r.Get("/", home)
+  // r.Handle("/homehandle", new(homeHandle))
 	// Use variable hh which implements the handle interface
 	// r.Handle("/homehandle", hh)
-  r.HandleFunc("/contact", contact)
-  r.HandleFunc("/faq", faq)
-	r.NotFoundHandler = nf
+  r.Get("/contact", contact)
+  r.Get("/faq", faq)
+	r.Get("/users/{userID}", user)
+	// r.NotFound(http.HandlerFunc(notFound))
+	r.NotFound(notFound)
+	
 	fmt.Println("Starting server on port 3000")
   http.ListenAndServe(":3000", r)
 }
